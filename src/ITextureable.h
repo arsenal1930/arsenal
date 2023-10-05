@@ -13,7 +13,7 @@ protected:
 public:
     sf::Sprite &getSprite();
 
-    ITextureable();
+    ITextureable(std::string path = "cat.png");
     ~ITextureable();
 };
 #endif

@@ -1,13 +1,10 @@
 #include "Denizen.h"
 
-void Denizen::addInput(float InputX, float InputY)
+void Denizen::setInput(sf::Vector2f input)
 {
-    if (this->InputX != InputX)
-        this->InputX += InputX;
-    if (this->InputY != InputY)
-        this->InputY += InputY;
+    this->input = Math::Normalize(input);
 }
 void Denizen::move()
 {
-    this->sprite.move(InputX * currentSpeed, InputY * currentSpeed);
+    this->sprite.move(this->input*speedModifier);
 }
