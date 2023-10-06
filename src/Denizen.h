@@ -9,7 +9,7 @@ class Denizen : public IAnimable
 {
 private:
     sf::Vector2f input;
-    float speedModifier = 1.0f;
+    float speedModifier = 0.1f;
 
 public:
     Denizen()

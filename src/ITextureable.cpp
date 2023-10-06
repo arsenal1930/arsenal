@@ -1,10 +1,7 @@
 #include "ITextureable.h"
 
-ITextureable::ITextureable()
-{
-    if (!texture.loadFromFile("cat.jpg"))
-    {
-    }
+ITextureable::ITextureable(std::string path) {
+    if (!texture.loadFromFile(path)) {return;}
     sprite.setTexture(this->texture);
 }
 ITextureable::~ITextureable() {}
