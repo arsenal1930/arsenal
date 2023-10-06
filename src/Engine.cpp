@@ -9,53 +9,40 @@ void Engine::input()
 	{
 		switch (event_play.type)
 		{
-		case sf::Event::KeyPressed:
-			switch (event_play.key.code)
-			{
-			case sf::Keyboard::A:
-				mainWorld->getDenizen(0).addInput(-1.0f, 0.0f);
+			case sf::Event::KeyPressed:
+				switch (event_play.key.code)
+				{
+					default:
+						break;
+				}
+			case sf::Event::KeyReleased:
+				switch (event_play.key.code)
+				{
+					case sf::Keyboard::A:
+					case sf::Keyboard::D:
+					case sf::Keyboard::W:
+					case sf::Keyboard::S:
+						mainWorld->getDenizen(0).setInput(sf::Vector2f(
+							sf::Keyboard::isKeyPressed(sf::Keyboard::D) - 
+							sf::Keyboard::isKeyPressed(sf::Keyboard::A),
+							sf::Keyboard::isKeyPressed(sf::Keyboard::S) - 
+							sf::Keyboard::isKeyPressed(sf::Keyboard::W)
+						));
+						break;
+					case sf::Keyboard::Escape:
+						mainWindow->close();
+						break;
+					default:
+						break;
+				}
 				break;
-			case sf::Keyboard::D:
-				mainWorld->getDenizen(0).addInput(1.0f, 0.0f);
-				break;
-			case sf::Keyboard::W:
-				mainWorld->getDenizen(0).addInput(0.0f, -1.0f);
-				break;
-			case sf::Keyboard::S:
-				mainWorld->getDenizen(0).addInput(0.0f, 1.0f);
-				break;
-			/*case sf::Keyboard::Escape:
-				mainWindow->close();
-				break;*/
-
-			default:
-				break;
-			}
-			break;
-		case sf::Event::KeyReleased:
-			switch (event_play.key.code)
-			{
-			case sf::Keyboard::A:
-				mainWorld->getDenizen(0).addInput(1.0f, 0.0f);
-				break;
-			case sf::Keyboard::D:
-				mainWorld->getDenizen(0).addInput(-1.0f, 0.0f);
-				break;
-			case sf::Keyboard::W:
-				mainWorld->getDenizen(0).addInput(0.0f, 1.0f);
-				break;
-			case sf::Keyboard::S:
-				mainWorld->getDenizen(0).addInput(0.0f, -1.0f);
-				break;
-			case sf::Keyboard::Escape:
+			case sf::Event::Closed:
 				mainWindow->close();
 				break;
-
 			default:
 				break;
-			}
-			break;
 		}
+		
 	}
 }
 
@@ -85,7 +72,7 @@ Engine::Engine(TheWorld *world)
 {
 	this->mainWorld = world;
 	// Загрузка текстуры
-	background_texture.loadFromFile("image/background.jpg");
+	background_texture.loadFromFile("images/background.jpg");
 	// Получение ссылки на текстуру для прямоугольника
 	background.setTexture(&background_texture);
 }

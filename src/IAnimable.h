@@ -3,8 +3,9 @@
 #define IAnimableInit
 
 #include "ITextureable.h"
-class IAnimable : public ITextureable
-{
-    IAnimable(std::string path = "cat.png") : ITexturable(path);
+
+class IAnimable : public ITextureable {
+    public:
+        IAnimable(std::string path = "images/cat.jpg") : ITextureable(path) {}
 };
 #endif
