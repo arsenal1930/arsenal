@@ -14,6 +14,6 @@ sf::Vector2f Math::Normalize(const sf::Vector2f& vec)
 template<typename T> T Math::Clump(T curr, T delta, T limit) 
 {
     if(delta > 0) return (curr + delta >= limit) ? limit : (curr + delta);
-    if(delta < 0) return (curr + delta <= limit) ? limit : (curr + delta);
+    if(delta < 0) return (curr - delta <= limit) ? limit : (curr - delta);
     return curr;
 }
