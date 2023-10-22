@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include "TheWorld.h"
+#include "Base/TheWorld.h"
 
 #ifdef DEBUG
 #include <iostream>
