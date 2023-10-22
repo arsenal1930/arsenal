@@ -4,11 +4,11 @@ project('arsenal1930', 'cpp',
 )
 
 src = [
-  'src/xui.cpp', 
-  'src/Engine.cpp', 
-  'src/Denizen.cpp', 
-  'src/ITextureable.cpp',
-  'src/GameMath.cpp'
+  'src/init.cpp', 
+  'src/Engine/Engine.cpp', 
+  'src/Engine/Base/Denizen.cpp', 
+  'src/Engine/Base/ITextureable.cpp',
+  'src/Engine/Math/GameMath.cpp'
 ]
 
 sfml_dep = dependency('sfml-all')

@@ -3,7 +3,7 @@
 #define DenizenInit
 
 #include "IAnimable.h"
-#include "GameMath.h"
+#include "../Math/GameMath.h"
 
 class Denizen : public IAnimable
 {
