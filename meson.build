@@ -1,5 +1,5 @@
 project('arsenal1930', 'cpp',
-  version: '0.1.0',
+  version: '0.1.1',
   license: 'GPLv3'
 )
 
@@ -11,7 +11,7 @@ src = [
   'src/Engine/Math/GameMath.cpp'
 ]
 
-sfml_dep = dependency('sfml-all')
+sfml_dep = dependency('sfml')
 
 executable('arsenal1930', src, dependencies: sfml_dep)
 
