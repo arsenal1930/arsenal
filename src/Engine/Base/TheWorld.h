@@ -3,18 +3,20 @@
 #ifndef TheWorldInit
 #define TheWorldInit
 
-#include "Denizen.h"
+#include "Object.h"
+
 #include <vector>
 
 class TheWorld
 {
 private:
-    std::vector<Denizen> denizens;
+    std::vector<Object> objects;
 
 public:
-    int getDenizensSize() { return denizens.size(); }
-    Denizen &getDenizen(int id) { return denizens.at(id); }
-    void addDenizen(Denizen &denizen) { denizens.push_back(denizen); }
+    int getObjectsSize() { return objects.size(); }
+    Object &getObject(int id) { return objects.at(id); }
+    void addObject(Object &object) { objects.push_back(object); }
+    std::vector<Object> &getList() { return this->objects; }
 };
 
 #endif

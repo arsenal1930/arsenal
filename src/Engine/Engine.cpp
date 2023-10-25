@@ -22,7 +22,7 @@ void Engine::input()
 					case sf::Keyboard::D:
 					case sf::Keyboard::W:
 					case sf::Keyboard::S:
-						mainWorld->getDenizen(0).setInput(sf::Vector2f(
+						mainWorld->getObject(0).setInput(sf::Vector2f(
 							sf::Keyboard::isKeyPressed(sf::Keyboard::D) - 
 							sf::Keyboard::isKeyPressed(sf::Keyboard::A),
 							sf::Keyboard::isKeyPressed(sf::Keyboard::S) - 
@@ -48,25 +48,25 @@ void Engine::input()
 
 void Engine::update(sf::Time const &deltaTime)
 {
-	for (int i = 0; i < mainWorld->getDenizensSize(); i++)
+	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
-		mainWorld->getDenizen(i).move();
+		mainWorld->getObject(i).physicsUpdate(mainWorld->getList());
 	}
 }
 
-void Engine::draw()
+/*void Engine::draw()
 {
 	// Очистка графического окна
 	mainWindow->clear();
 	// Отрисовка фона в графическом окне
 	mainWindow->draw(background);
-	for (int i = 0; i < mainWorld->getDenizensSize(); i++)
+	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
-		mainWindow->draw(mainWorld->getDenizen(i).getSprite());
+		mainWindow->draw(mainWorld->getObject(i).getSprite());
 	}
 	// Вывод объектов в графическом окне
 	mainWindow->display();
-}
+}*/
 
 Engine::Engine(TheWorld *world)
 {
@@ -89,6 +89,6 @@ void Engine::run()
 
 		input();
 		update(dt);
-		draw();
+		//draw();
 	}
 }
