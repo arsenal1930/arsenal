@@ -54,19 +54,19 @@ void Engine::update(sf::Time const &deltaTime)
 	}
 }
 
-/*void Engine::draw()
+void Engine::draw()
 {
 	// Очистка графического окна
 	mainWindow->clear();
 	// Отрисовка фона в графическом окне
-	mainWindow->draw(background);
+	//mainWindow->draw(background);
 	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
-		mainWindow->draw(mainWorld->getObject(i).getSprite());
+		mainWindow->draw(mainWorld->getObject(i).draw());
 	}
 	// Вывод объектов в графическом окне
 	mainWindow->display();
-}*/
+}
 
 Engine::Engine(TheWorld *world)
 {
