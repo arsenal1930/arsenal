@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "../Math/GameMath.h"
 
 class Object
@@ -35,11 +37,12 @@ private:
         }
         void lset(sf::Rect<int> rect, sf::Vector2f locale) // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
         {
-            rectCollision.left += rect.left + locale.x;
-            rectCollision.top += rect.top + locale.y;
+            rectCollision.left = rect.left + locale.x;
+            rectCollision.top = rect.top + locale.y;
 
             rectCollision.width = rect.width;
             rectCollision.height = rect.height;
+            // std::cout<<rectCollision.left<<'\t'<<rectCollision.top<<'\t'<<rectCollision.height<<'\t'<<rectCollision.width<<std::endl;
         }
         void gset(float x, float y, float width, float height) // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
         {
@@ -106,10 +109,9 @@ private:
         int currentAnimation = 0;
         class Animation
         {
-            bool isActive = false;
-
             sf::Texture tilemap;
-            int currentFrame = 0, maxFrame = 0;
+            bool isActive = false;
+            int currentFrame = 0;
             class Frame
             {
 
@@ -185,9 +187,33 @@ private:
             std::vector<Frame> frames;
 
         public:
+            int maxFrame = 0;
+            std::string name;
+            void enable()
+            {
+                this->isActive = true;
+            }
+            void disable()
+            {
+                this->isActive = false;
+            }
+            void setTileset(std::string adress)
+            {
+                if (!tilemap.loadFromFile(adress))
+                {
+                }
+            }
+            void addFrame(
+                sf::Vector2i picturePosition = V2iNULL,
+                sf::Vector2i pictureSize = V2iNULL,
+                sf::Vector2i collisionPosition = V2iNULL,
+                sf::Vector2i collisionSize = V2iNULL)
+            {
+                frames.push_back(Frame(picturePosition, pictureSize, collisionPosition, collisionSize));
+            }
             sf::Sprite updateFrame()
             {
-                if (!this->isActive || this->currentFrame == this->maxFrame)
+                if (!this->isActive || this->currentFrame == this->maxFrame - 1)
                 {
                     this->currentFrame = 0;
                 }
@@ -202,20 +228,157 @@ private:
                 return this->frames.at(currentFrame).getFrameCollision();
             }
         };
-        public:
+
+    public:
+        Animator(std::string adressTxt)
+        {
+            readAnimator(adressTxt);
+            setAnimation(currentAnimation);
+        }
         void updateAnimation(Collision &collision)
         {
+            sf::Vector2f position = this->sprite.getPosition();
             this->sprite = this->animations.at(this->currentAnimation).updateFrame();
-            collision.lset(this->animations.at(this->currentAnimation).updateCollision(),this->sprite.getGlobalBounds().getPosition());
+            this->sprite.setPosition(position);
+            collision.lset(this->animations.at(this->currentAnimation).updateCollision(), this->sprite.getGlobalBounds().getPosition());
+        }
+        void setAnimation(int number)
+        {
+            animations.at(currentAnimation).disable();
+            currentAnimation = number;
+            animations.at(currentAnimation).enable();
         }
         sf::Sprite &getSprite()
         {
             return this->sprite;
         }
         std::vector<Animation> animations;
+        void moveSprite(float x, float y)
+        {
+            this->sprite.move(x, y);
+        }
+        void readAnimator(std::string adress)
+        {
+            std::string line;
+            std::ifstream myfile;
+            myfile.open(adress);
+            while (getline(myfile, line))
+            {
+                switch (line[0])
+                {
+                case 'N':
+                {
+                    Animation newAnimation;
+                    int k = 0;
+                    std::string newLine = "";
+                    for (int i = 1; i < line.length(); i++)
+                    {
+                        if (line[i] != ' ')
+                        {
+                            newLine += line[i];
+                        }
+                        else
+                        {
+                            k++;
+                            switch (k)
+                            {
+                            case 1:
+                            {
+                                newAnimation.name = newLine;
+                            }
+                            break;
+                            case 2:
+                            {
+                                newAnimation.setTileset(newLine);
+                            }
+                            break;
+                            case 3:
+                            {
+                                newAnimation.maxFrame = stoi(newLine);
+                            }
+                            break;
+                            }
+                            newLine = "";
+                        }
+                    }
+                    animations.push_back(newAnimation);
+                }
+                break;
+                case 'F':
+                {
+                    int pictPosX;
+                    int pictPosY;
+                    int pictSizeX;
+                    int pictSizeY;
+                    int colliderLocPosX;
+                    int colliderLocPosY;
+                    int colliderSizeX;
+                    int colliderSizeY;
+                    int k = 0;
+                    std::string newLine = "";
+                    for (int i = 1; i < line.length(); i++)
+                    {
+                        if (line[i] != ' ')
+                            newLine += line[i];
+                        else
+                        {
+                            k++;
+                            switch (k)
+                            {
+                            case 2:
+                            {
+                                pictPosX = stoi(newLine);
+                            }
+                            break;
+                            case 3:
+                            {
+                                pictPosY = stoi(newLine);
+                            }
+                            break;
+                            case 4:
+                            {
+                                pictSizeX = stoi(newLine);
+                            }
+                            break;
+                            case 5:
+                            {
+                                pictSizeY = stoi(newLine);
+                            }
+                            break;
+                            case 6:
+                            {
+                                colliderLocPosX = stoi(newLine);
+                            }
+                            break;
+                            case 7:
+                            {
+                                colliderLocPosY = stoi(newLine);
+                            }
+                            break;
+                            case 8:
+                            {
+                                colliderSizeX = stoi(newLine);
+                            }
+                            break;
+                            case 9:
+                            {
+                                colliderSizeY = stoi(newLine);
+                            }
+                            break;
+                            }
+                            newLine = "";
+                        }
+                    }
+                    animations.at(animations.size() - 1).addFrame(sf::Vector2i(pictPosX, pictPosY), sf::Vector2i(pictSizeX, pictSizeY), sf::Vector2i(colliderLocPosX, colliderLocPosY), sf::Vector2i(colliderSizeX, colliderSizeY));
+                }
+                break;
+                }
+            }
+            myfile.close();
+        }
     };
     Collision collision;
-    Animator animator;
+    Animator *animator;
     sf::Vector2f input;
     float speedModifier = 0.01f;
 
@@ -232,8 +395,9 @@ public:
     }
     // вернёт ссылку на коллизию для дальнейших взаимодействий
     Collision &getCollision() { return this->collision; }
-    Object(int id, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL)
+    Object(int id, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL,std::string adressTxt = "texts/example.txt")
     {
+        this->animator = new Animator(adressTxt);
         this->collision.add(position, sizeX, sizeY);
         this->id = id;
     }
@@ -244,18 +408,19 @@ public:
         this->collision.onCollisionStay(objects, actions.at(2));
         this->collision.onCollisionExit(*this, actions.at(3));
         this->move(this->input * speedModifier);
-        this->animator.updateAnimation(collision);
+        this->animator->updateAnimation(collision);
     }
-    sf::Sprite & draw(){
-        return this->animator.getSprite();
+    sf::Sprite &draw()
+    {
+        return this->animator->getSprite();
     }
     void move(float x, float y)
     {
-        this->collision.add(sf::Vector2f(x, y));
+        this->animator->moveSprite(x, y);
     }
     void move(sf::Vector2f input)
     {
-        this->collision.add(input);
+        this->animator->moveSprite(input.x, input.y);
     }
     // ввожу систему действий по кодам действия, таким образом действия с кодами 1,2,3 будут соответствовать вхождению, нахождению и выходу из коллизии соответственно
     // блять только понял какие есть с этим проблемы
@@ -266,11 +431,11 @@ public:
         {
         case 1:
             std::cout << "Enter " << this->id << std::endl;
-            // std::cout << "Pobeda1 " << std::endl;
+            //  std::cout << "Pobeda1 " << std::endl;
             break;
         case 2:
-            std::cout << "Stay " << this->id << std::endl;
-            // std::cout << "Pobeda2 " << std::endl;
+            // std::cout << "Stay " << this->id << std::endl;
+            //  std::cout << "Pobeda2 " << std::endl;
             break;
         case 3:
             std::cout << "Exit " << this->id << std::endl;

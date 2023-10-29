@@ -89,6 +89,6 @@ void Engine::run()
 
 		input();
 		update(dt);
-		//draw();
+		draw();
 	}
 }
