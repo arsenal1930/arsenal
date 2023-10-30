@@ -7,14 +7,14 @@ T gm::VecLength(const sf::Vector2<T>& vec)
 }
 
 template <typename T>
-sf::Vector2<T> Math::Normalize(const sf::Vector2<T>& vec)
+sf::Vector2<T> gm::Normalize(const sf::Vector2<T>& vec)
 {
 	float len = VecLength(vec);
 	return (len > 0) ? sf::Vector2<T>(vec.x / len, vec.y / len) : vec;
 }
 
 template <typename T>
-T Math::Clump(T curr, T delta, T limit)
+T gm::Clump(T curr, T delta, T limit)
 {
 	if(delta > 0) return (curr + delta >= limit) ? limit : (curr + delta);
 	if(delta < 0) return (curr + delta <= limit) ? limit : (curr + delta);
