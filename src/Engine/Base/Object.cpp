@@ -69,9 +69,7 @@ void Object::Collision::onCollisionStay(std::vector<Object> &objects, int action
 // делает действие объекта на его выходе из себя
 vecObjRefs &Object::Collision::onCollisionExit(Object &owner, int actionId)
 {
-    std::vector<std::reference_wrapper<Object>> colliderRecerences;
-    for (int j = 0; j < containedObjects.size(); j++)
-        static vecObjRefs colliderRecerences;
+    static vecObjRefs colliderRecerences;
     for (size_t j = 0; j < containedObjects.size(); j++)
         if (!(containedObjects.at(j).get().getCollision().intersects(rectCollision)))
         {
