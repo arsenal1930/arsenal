@@ -2,7 +2,7 @@
 
 void Denizen::setInput(sf::Vector2<float> input)
 {
-    this->input = Math::Normalize(input);
+    this->input = gm::Normalize(input);
 }
 void Denizen::move()
 {

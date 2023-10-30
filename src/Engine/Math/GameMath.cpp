@@ -1,8 +1,7 @@
 #include "GameMath.h"
 
-	
 template <typename T>
-T Math::length(const sf::Vector2<T>& vec)
+T gm::VecLength(const sf::Vector2<T>& vec)
 {
 	return std::sqrt((vec.x*vec.x) + (vec.y*vec.y));
 }
@@ -10,8 +9,8 @@ T Math::length(const sf::Vector2<T>& vec)
 template <typename T>
 sf::Vector2<T> Math::Normalize(const sf::Vector2<T>& vec)
 {
-	T len = length(vec);
-	return (len > 0) ? vec / len : vec;
+	float len = VecLength(vec);
+	return (len > 0) ? sf::Vector2<T>(vec.x / len, vec.y / len) : vec;
 }
 
 template <typename T>
@@ -22,11 +21,12 @@ T Math::Clump(T curr, T delta, T limit)
 	return curr;
 }
 
+template int gm::VecLength(const sf::Vector2<int>& vec);
+template long gm::VecLength(const sf::Vector2<long>& vec);
+template float gm::VecLength(const sf::Vector2<float>& vec);
+template double gm::VecLength(const sf::Vector2<double>& vec);
+template long double gm::VecLength(const sf::Vector2<long double>& vec);
 
-template float Math::length(const sf::Vector2<float>& vec);
-template double Math::length(const sf::Vector2<double>& vec);
-template long double Math::length(const sf::Vector2<long double>& vec);
-
-template sf::Vector2<float> Math::Normalize(const sf::Vector2<float>&);
-template sf::Vector2<double> Math::Normalize(const sf::Vector2<double>&);
-template sf::Vector2<long double> Math::Normalize(const sf::Vector2<long double>&);
+template sf::Vector2<float> gm::Normalize(const sf::Vector2<float>&);
+template sf::Vector2<double> gm::Normalize(const sf::Vector2<double>&);
+template sf::Vector2<long double> gm::Normalize(const sf::Vector2<long double>&);

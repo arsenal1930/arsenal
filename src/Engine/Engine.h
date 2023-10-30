@@ -1,7 +1,7 @@
 #pragma once
 
 #define EngineInit
-#define DEBUG
+#//define DEBUG
 
 #include <SFML/Graphics.hpp>
 #include <memory>

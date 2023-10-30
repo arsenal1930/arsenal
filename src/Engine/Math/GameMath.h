@@ -3,10 +3,13 @@
 #define GAMEMATH
 #include<cmath>
 #include<SFML/System/Vector2.hpp>
+#define V2fNULL sf::Vector2f()
+#define V2iNULL sf::Vector2i()
 
-namespace Math { 
+namespace gm 
+{ 
 	template <typename T> 
-	T length(const sf::Vector2<T>& vec);
+	T VecLength(const sf::Vector2<T>& vec);
 	
 	template <typename T> 
 	T Clump(T curr, T delta, T limit);
@@ -15,4 +18,4 @@ namespace Math {
 	sf::Vector2<T> Normalize(const sf::Vector2<T>& vec);
 }
 
-#endif
+#endif //GAMEMATH
