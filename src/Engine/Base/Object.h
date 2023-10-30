@@ -9,6 +9,8 @@
 #include <string>
 #include "../Math/GameMath.h"
 
+#define DEBUG
+
 class Object
 {
 private:
@@ -85,6 +87,7 @@ private:
             void enable();
             void disable();
             void setTileset(std::string adress);
+            sf::Texture &getTileset();
             Animation() {}
             void addFrame(
                 sf::Vector2i picturePosition = V2iNULL,
@@ -98,10 +101,14 @@ private:
 
     public:
         std::string adressTxt;
+#ifdef DEBUG
+        std::string debugString;
+#endif // DEBUG
         Animator() {}
         Animator(std::string adressTxt);
+        void initialize(std::string adressTxt);
         void updateAnimation(Collision &collision);
-        void setAnimation(int number);
+        void setAnimation(int number, sf::Sprite &sprite);
         sf::Sprite &getSprite();
         void moveSprite(float x, float y);
         void readAnimator(std::string adress);
@@ -125,6 +132,8 @@ public:
     virtual ~Object();
     // виртуальные для возможного переопределения в детях
     virtual void physicsUpdate(std::vector<Object> &objects);
+    virtual void animationUpdate();
+    virtual void update();
     sf::Sprite &draw();
     void move(float x, float y);
     void move(sf::Vector2f input);
