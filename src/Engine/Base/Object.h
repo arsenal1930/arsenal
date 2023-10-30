@@ -9,7 +9,7 @@
 #include <string>
 #include "../Math/GameMath.h"
 
-
+#define DEBUG
 
 class Object
 {
@@ -18,8 +18,9 @@ private:
     {
     private:
         sf::Rect<float> rectCollision;
-	std::vector<std::reference_wrapper<Object>> containedObjects;
-	bool isInContainedObjects(std::vector<std::reference_wrapper<Object>>&, Object&, size_t);
+
+        std::vector<std::reference_wrapper<Object>> containedObjects;
+        bool isInContainedObjects(std::vector<std::reference_wrapper<Object>> &, Object &, size_t);
 
     public:
         void add(sf::Vector2f position = V2fNULL, float width = 0, float height = 0);     // прибавляет к параметрам класса Rect в rectCollision значения из параметров функции
@@ -88,6 +89,7 @@ private:
             void enable();
             void disable();
             void setTileset(std::string adress);
+            sf::Texture &getTileset();
             Animation() {}
             void addFrame(
                 sf::Vector2i picturePosition = V2iNULL,
@@ -101,10 +103,14 @@ private:
 
     public:
         std::string adressTxt;
+#ifdef DEBUG
+        std::string debugString;
+#endif // DEBUG
         Animator() {}
         Animator(std::string adressTxt);
+        void initialize(std::string adressTxt);
         void updateAnimation(Collision &collision);
-        void setAnimation(int number);
+        void setAnimation(int number, sf::Sprite &sprite);
         sf::Sprite &getSprite();
         void moveSprite(float x, float y);
         void readAnimator(std::string adress);
@@ -128,12 +134,13 @@ public:
     virtual ~Object();
     // виртуальные для возможного переопределения в детях
     virtual void physicsUpdate(std::vector<Object> &objects);
+    virtual void animationUpdate();
+    virtual void update();
     sf::Sprite &draw();
     void move(float x, float y);
     void move(sf::Vector2f input);
     virtual void action(int code);
 };
-
 
 using vecObjRefs = std::vector<std::reference_wrapper<Object>>;
 #endif
