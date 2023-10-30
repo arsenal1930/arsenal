@@ -59,7 +59,7 @@ void Engine::draw()
 	// Очистка графического окна
 	mainWindow->clear();
 	// Отрисовка фона в графическом окне
-	//mainWindow->draw(background);
+	mainWindow->draw(background);
 	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
 		mainWindow->draw(mainWorld->getObject(i).draw());
@@ -72,7 +72,7 @@ Engine::Engine(TheWorld *world)
 {
 	this->mainWorld = world;
 	// Загрузка текстуры
-	background_texture.loadFromFile("images/background.jpg");
+	background_texture.loadFromFile("images/cat.jpg");
 	// Получение ссылки на текстуру для прямоугольника
 	background.setTexture(&background_texture);
 }
