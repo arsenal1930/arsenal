@@ -7,6 +7,7 @@ src = [
   'src/init.cpp', 
   'src/Engine/Engine.cpp', 
   'src/Engine/Math/GameMath.cpp',
+  'src/Engine/Base/Object.cpp',
   'src/Engine/Base/Denizen.cpp', 
   'src/Engine/Base/ITextureable.cpp'
 ]
