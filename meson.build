@@ -3,6 +3,8 @@ project('arsenal1930', 'cpp',
   license: 'GPLv3'
 )
 
+add_project_arguments('-march=core2', language: 'cpp')
+
 src = [
   'src/init.cpp', 
   'src/Engine/Engine.cpp', 

@@ -32,19 +32,23 @@ void Object::Collision::gset(float x, float y, float width, float height) // т�
     rectCollision.width = width;
     rectCollision.height = height;
 }
+
+bool Object::Collision::isInContainedObjects(vecObjRefs &containedObjects, Object &object, size_t i) 
+{
+	for (size_t j = 0; j < containedObjects.size(); j++)
+		if (&(object.getCollision()) == &(containedObjects.at(j).get().getCollision()))
+			return false;
+	return true;
+}
+
 // вернёт объект зашедший
 Object &Object::Collision::onCollisionEnter(std::vector<Object> &objects, int actionId)
 {
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
     {
         if (&objects.at(i).getCollision() != this && objects.at(i).getCollision().intersects(rectCollision))
         {
-            if (containedObjects.size() == 0 || [](std::vector<std::reference_wrapper<Object>> &containedObjects, std::vector<Object> &objects, int i)
-                {
-                            for (int j = 0; j < containedObjects.size(); j++)
-                                if (&objects.at(i).getCollision() == &(containedObjects.at(j).get().getCollision()))
-                                return false;
-                            return true; }(containedObjects, objects, i))
+            if (containedObjects.size() == 0 || isInContainedObjects(containedObjects, objects.at(i), i))
             {
                 containedObjects.push_back(objects.at(i));
                 objects.at(i).action(actionId);
@@ -52,23 +56,21 @@ Object &Object::Collision::onCollisionEnter(std::vector<Object> &objects, int ac
             }
         }
     }
+    return objects.at(0);
+    // TODO objects.at(0) должен содержать пустой объект
 }
 // делает действие у объекта в списке содержащихся объектов
 void Object::Collision::onCollisionStay(std::vector<Object> &objects, int actionId)
 {
-    for (int i = 0; i < objects.size(); i++)
-        for (int j = 0; j < containedObjects.size(); j++)
-            if (&objects.at(i).getCollision() == &(containedObjects.at(j).get().getCollision()))
-            {
-                objects.at(i).action(actionId);
-                break;
-            }
+    for (size_t i = 0; i < objects.size(); i++)
+        if(isInContainedObjects(containedObjects, objects.at(i), i))
+		objects.at(i).action(actionId);
 }
 // делает действие объекта на его выходе из себя
-std::vector<std::reference_wrapper<Object>> &Object::Collision::onCollisionExit(Object &owner, int actionId)
+vecObjRefs &Object::Collision::onCollisionExit(Object &owner, int actionId)
 {
-    std::vector<std::reference_wrapper<Object>> colliderRecerences;
-    for (int j = 0; j < containedObjects.size(); j++)
+    static vecObjRefs colliderRecerences;
+    for (size_t j = 0; j < containedObjects.size(); j++)
         if (!(containedObjects.at(j).get().getCollision().intersects(rectCollision)))
         {
             containedObjects.at(j).get().action(actionId);
@@ -230,7 +232,7 @@ void Object::Animator::readAnimator(std::string adress)
                 Animation newAnimation;
                 int k = 0;
                 std::string newLine = "";
-                for (int i = 1; i < line.length(); i++)
+                for (size_t i = 1; i < line.length(); i++)
                 {
                     if (line[i] != ' ')
                     {
@@ -268,7 +270,7 @@ void Object::Animator::readAnimator(std::string adress)
                 int pictPosX, pictPosY, pictSizeX, pictSizeY, colliderLocPosX, colliderLocPosY, colliderSizeX, colliderSizeY;
                 int k = 0;
                 std::string newLine = "";
-                for (int i = 1; i < line.length(); i++)
+                for (size_t i = 1; i < line.length(); i++)
                 {
                     if (line[i] != ' ')
                         newLine += line[i];

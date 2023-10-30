@@ -9,6 +9,8 @@
 #include <string>
 #include "../Math/GameMath.h"
 
+
+
 class Object
 {
 private:
@@ -16,7 +18,8 @@ private:
     {
     private:
         sf::Rect<float> rectCollision;
-        std::vector<std::reference_wrapper<Object>> containedObjects;
+	std::vector<std::reference_wrapper<Object>> containedObjects;
+	bool isInContainedObjects(std::vector<std::reference_wrapper<Object>>&, Object&, size_t);
 
     public:
         void add(sf::Vector2f position = V2fNULL, float width = 0, float height = 0);     // прибавляет к параметрам класса Rect в rectCollision значения из параметров функции
@@ -131,4 +134,6 @@ public:
     virtual void action(int code);
 };
 
+
+using vecObjRefs = std::vector<std::reference_wrapper<Object>>;
 #endif

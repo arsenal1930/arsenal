@@ -25,8 +25,11 @@ template int gm::VecLength(const sf::Vector2<int>& vec);
 template long gm::VecLength(const sf::Vector2<long>& vec);
 template float gm::VecLength(const sf::Vector2<float>& vec);
 template double gm::VecLength(const sf::Vector2<double>& vec);
-template long double gm::VecLength(const sf::Vector2<long double>& vec);
 
 template sf::Vector2<float> gm::Normalize(const sf::Vector2<float>&);
 template sf::Vector2<double> gm::Normalize(const sf::Vector2<double>&);
-template sf::Vector2<long double> gm::Normalize(const sf::Vector2<long double>&);
+
+template float gm::Clump(float, float, float);
+template double gm::Clump(double, double, double);
+template int gm::Clump(int, int, int);
+template long gm::Clump(long, long, long);
