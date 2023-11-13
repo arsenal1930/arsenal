@@ -183,10 +183,10 @@ sf::Rect<int> Object::Animator::Animation::updateFrame()
     {
         currentFrame++;
     }
-#ifdef DEBUG
+#ifdef DEBUGANIM
     std::cout << currentFrame << maxFrame << ' ' << isActive << ' ' << '\n'
               << "left: " << frames.at(currentFrame).getFramePict().left << "\ntop: " << frames.at(currentFrame).getFramePict().top << "\nwidth " << frames.at(currentFrame).getFramePict().width << "\nheight: " << frames.at(currentFrame).getFramePict().height << '\n';
-#endif // DEBUG
+#endif // DEBUGANIM
     return frames.at(currentFrame).getFramePict();
 }
 sf::Rect<int> Object::Animator::Animation::updateCollision()
@@ -197,29 +197,23 @@ sf::Rect<int> Object::Animator::Animation::updateCollision()
 Object::Animator::Animator(std::string adressTxt)
 {
     readAnimator(adressTxt);
-#ifndef DEBUG
-    std::cout << "enabling " << currentAnimation << '\n';
-#endif // DEBUG
     setAnimation(currentAnimation, sprite);
 }
 void Object::Animator::initialize(std::string adressTxt)
 {
     readAnimator(adressTxt);
-#ifndef DEBUG
-    std::cout << "enabling " << currentAnimation << '\n';
-#endif // DEBUG
     setAnimation(currentAnimation, sprite);
 }
 void Object::Animator::updateAnimation(Collision &collision)
 {
 
-#ifdef DEBUG
+#ifdef DEBUGANIM
     std::cout << currentAnimation << " Updating in Animator " << &sprite << '\n'
               << "left: " << sprite.getTextureRect().left << '\n'
               << "top: " << sprite.getTextureRect().top << '\n'
               << "width: " << sprite.getTextureRect().width << "\nheight: " << sprite.getTextureRect().height << '\n';
 
-#endif // DEBUG
+#endif // DEBUGANIM
     sf::Vector2f position = sprite.getPosition();
     sprite.setTextureRect(animations.at(currentAnimation).updateFrame());
     sprite.setPosition(position);
@@ -229,9 +223,6 @@ void Object::Animator::setAnimation(int number, sf::Sprite &sprite)
 {
     animations.at(currentAnimation).disable();
     currentAnimation = number;
-#ifndef DEBUG
-    std::cout << "enable " << currentAnimation << '\n';
-#endif // DEBUG
     sprite.setTexture(animations.at(currentAnimation).getTileset());
     animations.at(currentAnimation).enable();
 }
@@ -401,20 +392,30 @@ Object::Object(int id, float sizeX, float sizeY, sf::Vector2f position, std::str
     collision.add(position, sizeX, sizeY);
     this->id = id;
 }
+Object::Object(int id, float speedModifier, float sizeX, float sizeY, sf::Vector2f position, std::string adressTxt)
+{
+    animator.initialize(adressTxt);
+    collision.add(position, sizeX, sizeY);
+    this->id = id;
+    this->speedModifier = speedModifier;
+}
 void Object::animationUpdate()
 {
-#ifdef DEBUG
+#ifdef DEBUGANIM
     std::cout << "Updating in Object " << id << '\n';
-#endif // DEBUG
+#endif // DEBUGANIM
     animator.updateAnimation(collision);
 }
 // виртуальные для возможного переопределения в детях
-void Object::physicsUpdate(std::vector<Object> &objects)
+void Object::physicsUpdate(std::vector<Object> &objects,float delta)
 {
     collision.onCollisionEnter(objects, actions.at(1));
     collision.onCollisionStay(objects, actions.at(2));
     collision.onCollisionExit(*this, actions.at(3));
-    move(input * speedModifier);
+    move(input * speedModifier * delta);
+    #ifdef DEBUGPHYSICS
+    std::cout<<delta<<'\n';
+    #endif // DEBUGPHYSICS
 }
 void Object::update() {}
 Object::~Object()

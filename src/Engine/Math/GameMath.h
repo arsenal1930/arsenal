@@ -2,6 +2,7 @@
 #ifndef GAMEMATH
 #define GAMEMATH
 #include<cmath>
+#include <functional>
 #include<SFML/System/Vector2.hpp>
 #define V2fNULL sf::Vector2f()
 #define V2iNULL sf::Vector2i()
