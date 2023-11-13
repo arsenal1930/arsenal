@@ -9,58 +9,48 @@ void Engine::input()
 	{
 		switch (event_play.type)
 		{
-		case sf::Event::KeyPressed:
-			switch (event_play.key.code)
-			{
-			default:
+			case sf::Event::KeyPressed:
+				switch (event_play.key.code)
+				{
+					default:
+						break;
+				}
+			case sf::Event::KeyReleased:
+				switch (event_play.key.code)
+				{
+					case sf::Keyboard::A:
+					case sf::Keyboard::D:
+					case sf::Keyboard::W:
+					case sf::Keyboard::S:
+						mainWorld->getObject(0).setInput(sf::Vector2f(
+							sf::Keyboard::isKeyPressed(sf::Keyboard::D) - 
+							sf::Keyboard::isKeyPressed(sf::Keyboard::A),
+							sf::Keyboard::isKeyPressed(sf::Keyboard::S) - 
+							sf::Keyboard::isKeyPressed(sf::Keyboard::W)
+						));
+						break;
+					case sf::Keyboard::Escape:
+						mainWindow->close();
+						break;
+					default:
+						break;
+				}
 				break;
-			}
-		case sf::Event::KeyReleased:
-			switch (event_play.key.code)
-			{
-			case sf::Keyboard::A:
-			case sf::Keyboard::D:
-			case sf::Keyboard::W:
-			case sf::Keyboard::S:
-				mainWorld->getObject(0).setInput(sf::Vector2f(
-					sf::Keyboard::isKeyPressed(sf::Keyboard::D) -
-						sf::Keyboard::isKeyPressed(sf::Keyboard::A),
-					sf::Keyboard::isKeyPressed(sf::Keyboard::S) -
-						sf::Keyboard::isKeyPressed(sf::Keyboard::W)));
-				break;
-			case sf::Keyboard::Escape:
+			case sf::Event::Closed:
 				mainWindow->close();
 				break;
 			default:
 				break;
-			}
-			break;
-		case sf::Event::Closed:
-			mainWindow->close();
-			break;
-		default:
-			break;
 		}
+		
 	}
 }
 
-void Engine::windowSettingUp()
-{
-	mainWindow->setFramerateLimit(60);
-	mainWindow->setMouseCursorVisible(0);
-	mainWindow->setPosition(sf::Vector2<int>(0, 0));
-}
-
-void Engine::update(sf::Time const &deltaTime, bool onAnimUpdate)
+void Engine::update(sf::Time const &deltaTime)
 {
 	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
-		mainWorld->getObject(i).physicsUpdate(mainWorld->getList(), 0.01f); // deltaTime.asSeconds());
-
-		if (onAnimUpdate)
-		{
-			mainWorld->getObject(i).animationUpdate();
-		}
+		mainWorld->getObject(i).physicsUpdate(mainWorld->getList());
 	}
 }
 
@@ -69,7 +59,7 @@ void Engine::draw()
 	// Очистка графического окна
 	mainWindow->clear();
 	// Отрисовка фона в графическом окне
-	mainWindow->draw(background);
+	//mainWindow->draw(background);
 	for (int i = 0; i < mainWorld->getObjectsSize(); i++)
 	{
 		mainWindow->draw(mainWorld->getObject(i).draw());
@@ -78,39 +68,29 @@ void Engine::draw()
 	mainWindow->display();
 }
 
-Engine::Engine(TheWorld *world, float animationFrameRate)
+Engine::Engine(TheWorld *world)
 {
 	this->mainWorld = world;
 	// Загрузка текстуры
 	background_texture.loadFromFile("images/background.jpg");
 	// Получение ссылки на текстуру для прямоугольника
 	background.setTexture(&background_texture);
-
-	this->animationFrameRate = animationFrameRate;
-	animationDelta = 1.0f / animationFrameRate;
 }
-
+Engine::~Engine(){
+	delete mainWindow;
+};
 void Engine::run()
 {
-	windowSettingUp();
-	// Объявление переменной часы для физики
-	sf::Clock clockPhysics;
-	// Объявление переменной часы для анимации
-	sf::Clock clockAnimation;
+	// Объявление переменной часы
+	sf::Clock clock;
 	// Цикл работает пока окно открыто
 	while (mainWindow->isOpen())
 	{
 		// Текущее время присваиваем переменной времени dt
-		sf::Time dt = clockPhysics.restart();
+		sf::Time dt = clock.restart();
 
 		input();
-		update(dt, [&]()
-			   {if(clockAnimation.getElapsedTime().asSeconds() >= animationDelta)
-			{
-				clockAnimation.restart();
-				return 1;
-			}
-			else return 0; }());
+		update(dt);
 		draw();
 	}
 }

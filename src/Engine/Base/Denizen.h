@@ -8,14 +8,14 @@
 class Denizen : public IAnimable
 {
 private:
-    sf::Vector2<float> input;
+    sf::Vector2f input;
     float speedModifier = 0.1f;
 
 public:
     Denizen()
     {
     }
-    void setInput(sf::Vector2<float> input);
+    void setInput(sf::Vector2f input);
     void move();
 };
 
