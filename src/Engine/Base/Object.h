@@ -9,6 +9,8 @@
 #include <string>
 #include "../Math/GameMath.h"
 
+// #define DEBUGPHYSICS
+
 class Object
 {
 private:
@@ -16,96 +18,27 @@ private:
     {
     private:
         sf::Rect<float> rectCollision;
+
         std::vector<std::reference_wrapper<Object>> containedObjects;
+        bool isInContainedObjects(std::vector<std::reference_wrapper<Object>> &, Object &, size_t);
 
     public:
-        void add(sf::Vector2f position = V2fNULL, float width = 0, float height = 0) // прибавляет к параметрам класса Rect в rectCollision значения из параметров функции
-        {
-            rectCollision.left += position.x;
-            rectCollision.top += position.y;
-
-            rectCollision.width += width;
-            rectCollision.height += height;
-        }
-        void lset(sf::Vector2f position, float width, float height, sf::Vector2f locale) // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
-        {
-            rectCollision.left = locale.x + position.x;
-            rectCollision.top = locale.y + position.y;
-
-            rectCollision.width = width;
-            rectCollision.height = height;
-        }
-        void lset(sf::Rect<int> rect, sf::Vector2f locale) // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
-        {
-            rectCollision.left = rect.left + locale.x;
-            rectCollision.top = rect.top + locale.y;
-
-            rectCollision.width = rect.width;
-            rectCollision.height = rect.height;
-        }
-        void gset(float x, float y, float width, float height) // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
-        {
-            rectCollision.left = x;
-            rectCollision.top = y;
-
-            rectCollision.width = width;
-            rectCollision.height = height;
-        }
+        void add(sf::Vector2f position = V2fNULL, float width = 0, float height = 0);     // прибавляет к параметрам класса Rect в rectCollision значения из параметров функции
+        void lset(sf::Vector2f position, float width, float height, sf::Vector2f locale); // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
+        void lset(sf::Rect<int> rect, sf::Vector2f locale);                               // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
+        void gset(float x, float y, float width, float height);                           // то же, что и .add, но вместо прибавления задаёт параметры класса Rect в Collider.
         // вернёт объект зашедший
-        Object &onCollisionEnter(std::vector<Object> &objects, int actionId)
-        {
-            for (int i = 0; i < objects.size(); i++)
-            {
-                if (&objects.at(i).getCollision() != this && objects.at(i).getCollision().intersects(rectCollision))
-                {
-                    if (containedObjects.size() == 0 || [](std::vector<std::reference_wrapper<Object>> &containedObjects, std::vector<Object> &objects, int i)
-                        {
-                            for (int j = 0; j < containedObjects.size(); j++)
-                                if (&objects.at(i).getCollision() == &(containedObjects.at(j).get().getCollision()))
-                                return false;
-                            return true; }(containedObjects, objects, i))
-                    {
-                        containedObjects.push_back(objects.at(i));
-                        objects.at(i).action(actionId);
-                        return objects.at(i);
-                    }
-                }
-            }
-        }
+        Object &onCollisionEnter(std::vector<Object> &objects, int actionId);
         // делает действие у объекта в списке содержащихся объектов
-        void onCollisionStay(std::vector<Object> &objects, int actionId)
-        {
-            for (int i = 0; i < objects.size(); i++)
-                for (int j = 0; j < containedObjects.size(); j++)
-                    if (&objects.at(i).getCollision() == &(containedObjects.at(j).get().getCollision()))
-                    {
-                        objects.at(i).action(actionId);
-                        break;
-                    }
-        }
+        void onCollisionStay(std::vector<Object> &objects, int actionId);
         // делает действие объекта на его выходе из себя
-        std::vector<std::reference_wrapper<Object>> &onCollisionExit(Object &owner, int actionId)
-        {
-            std::vector<std::reference_wrapper<Object>> colliderRecerences;
-            for (int j = 0; j < containedObjects.size(); j++)
-                if (!(containedObjects.at(j).get().getCollision().intersects(rectCollision)))
-                {
-                    Object &colliderReference = (containedObjects.at(j).get());
-                    containedObjects.at(j).get().action(actionId);
-                    containedObjects.erase(containedObjects.begin() + j);
-                    colliderRecerences.push_back(colliderReference);
-                }
-            return colliderRecerences;
-        }
+        std::vector<std::reference_wrapper<Object>> &onCollisionExit(Object &owner, int actionId);
         // проверяет пересечение своей коллизии с другой
-        bool intersects(sf::Rect<float> collision)
-        {
-            return rectCollision.intersects(collision);
-        }
+        bool intersects(sf::Rect<float> collision);
     };
 
     class Animator
-    { // sosilalka
+    {
         sf::Sprite sprite;
         int currentAnimation = 0;
         class Animation
@@ -127,261 +60,64 @@ private:
                     sf::Vector2i picturePosition = V2iNULL,
                     sf::Vector2i pictureSize = V2iNULL,
                     sf::Vector2i collisionPosition = V2iNULL,
-                    sf::Vector2i collisionSize = V2iNULL)
-                {
-
-                    this->picturePosition = picturePosition;
-                    this->pictureSize = pictureSize;
-
-                    this->collisionPosition = collisionPosition;
-                    this->collisionSize = collisionSize;
-                }
+                    sf::Vector2i collisionSize = V2iNULL);
                 void add(
                     sf::Vector2i picturePosition = V2iNULL,
                     sf::Vector2i pictureSize = V2iNULL,
                     sf::Vector2i collisionPosition = V2iNULL,
-                    sf::Vector2i collisionSize = V2iNULL)
-                {
-
-                    this->picturePosition += picturePosition;
-                    this->pictureSize += pictureSize;
-
-                    this->collisionPosition += collisionPosition;
-                    this->collisionSize += collisionSize;
-                }
+                    sf::Vector2i collisionSize = V2iNULL);
                 void gset(
                     sf::Vector2i picturePosition = V2iNULL,
                     sf::Vector2i pictureSize = V2iNULL,
                     sf::Vector2i collisionPosition = V2iNULL,
-                    sf::Vector2i collisionSize = V2iNULL)
-                {
-
-                    this->picturePosition = picturePosition;
-                    this->pictureSize = pictureSize;
-
-                    this->collisionPosition = collisionPosition;
-                    this->collisionSize = collisionSize;
-                }
+                    sf::Vector2i collisionSize = V2iNULL);
                 void lset(
                     sf::Vector2i picturePosition = V2iNULL,
                     sf::Vector2i pictureSize = V2iNULL,
                     sf::Vector2i collisionPosition = V2iNULL,
                     sf::Vector2i collisionSize = V2iNULL,
-                    sf::Vector2i collisionPositionLocale = V2iNULL)
-                {
-
-                    this->picturePosition = picturePosition;
-                    this->pictureSize = pictureSize;
-
-                    this->collisionPosition = collisionPositionLocale + collisionPosition;
-                    this->collisionSize = collisionSize;
-                }
-                sf::Rect<int> getFramePict()
-                {
-                    return sf::Rect<int>(picturePosition, pictureSize);
-                }
-                sf::Rect<int> getFrameCollision()
-                {
-                    return sf::Rect<int>(collisionPosition, pictureSize);
-                }
+                    sf::Vector2i collisionPositionLocale = V2iNULL);
+                sf::Rect<int> getFramePict();
+                sf::Rect<int> getFrameCollision();
             };
-            std::vector<Frame> frames;
+            std::vector<Frame> frames{};
 
         public:
             int maxFrame = 0;
             std::string name;
-            void enable()
-            {
-                isActive = true;
-            }
-            void disable()
-            {
-                isActive = false;
-            }
-            void setTileset(std::string adress)
-            {
-                if (!tilemap.loadFromFile(adress))
-                {
-                }
-            }
+            void enable();
+            void disable();
+            void setTileset(std::string adress);
+            sf::Texture &getTileset();
+            Animation() {}
             void addFrame(
                 sf::Vector2i picturePosition = V2iNULL,
                 sf::Vector2i pictureSize = V2iNULL,
                 sf::Vector2i collisionPosition = V2iNULL,
-                sf::Vector2i collisionSize = V2iNULL)
-            {
-                frames.push_back(Frame(picturePosition, pictureSize, collisionPosition, collisionSize));
-            }
-            sf::Sprite updateFrame()
-            {
-                if (!isActive || currentFrame == maxFrame - 1)
-                {
-                    currentFrame = 0;
-                }
-                else
-                {
-                    currentFrame++;
-                }
-                return sf::Sprite(tilemap, frames.at(currentFrame).getFramePict());
-            }
-            sf::Rect<int> updateCollision()
-            {
-                return frames.at(currentFrame).getFrameCollision();
-            }
+                sf::Vector2i collisionSize = V2iNULL);
+            sf::Rect<int> updateFrame();
+            sf::Rect<int> updateCollision();
         };
+        std::vector<Animation> animations;
 
     public:
-        Animator(std::string adressTxt)
-        {
-            readAnimator(adressTxt);
-            setAnimation(currentAnimation);
-        }
-        void updateAnimation(Collision &collision)
-        {
-            sf::Vector2f position = sprite.getPosition();
-            sprite = animations.at(currentAnimation).updateFrame();
-            sprite.setPosition(position);
-            collision.lset(animations.at(currentAnimation).updateCollision(), sprite.getPosition());
-        }
-        void setAnimation(int number)
-        {
-            animations.at(currentAnimation).disable();
-            currentAnimation = number;
-            animations.at(currentAnimation).enable();
-        }
-        sf::Sprite &getSprite()
-        {
-            return sprite;
-        }
-        std::vector<Animation> animations;
-        void moveSprite(float x, float y)
-        {
-            sprite.move(x, y);
-        }
-        void readAnimator(std::string adress)
-        {
-            std::string line;
-            std::ifstream myfile;
-            myfile.open(adress);
-            while (getline(myfile, line))
-            {
-                switch (line[0])
-                {
-                case 'N':
-                {
-                    Animation newAnimation;
-                    int k = 0;
-                    std::string newLine = "";
-                    for (int i = 1; i < line.length(); i++)
-                    {
-                        if (line[i] != ' ')
-                        {
-                            newLine += line[i];
-                        }
-                        else
-                        {
-                            k++;
-                            switch (k)
-                            {
-                            case 1:
-                            {
-                                newAnimation.name = newLine;
-                            }
-                            break;
-                            case 2:
-                            {
-                                newAnimation.setTileset(newLine);
-                            }
-                            break;
-                            case 3:
-                            {
-                                newAnimation.maxFrame = stoi(newLine);
-                            }
-                            break;
-                            }
-                            newLine = "";
-                        }
-                    }
-                    animations.push_back(newAnimation);
-                }
-                break;
-                case 'F':
-                {
-                    int pictPosX;
-                    int pictPosY;
-                    int pictSizeX;
-                    int pictSizeY;
-                    int colliderLocPosX;
-                    int colliderLocPosY;
-                    int colliderSizeX;
-                    int colliderSizeY;
-                    int k = 0;
-                    std::string newLine = "";
-                    for (int i = 1; i < line.length(); i++)
-                    {
-                        if (line[i] != ' ')
-                            newLine += line[i];
-                        else
-                        {
-                            k++;
-                            switch (k)
-                            {
-                            case 2:
-                            {
-                                pictPosX = stoi(newLine);
-                            }
-                            break;
-                            case 3:
-                            {
-                                pictPosY = stoi(newLine);
-                            }
-                            break;
-                            case 4:
-                            {
-                                pictSizeX = stoi(newLine);
-                            }
-                            break;
-                            case 5:
-                            {
-                                pictSizeY = stoi(newLine);
-                            }
-                            break;
-                            case 6:
-                            {
-                                colliderLocPosX = stoi(newLine);
-                            }
-                            break;
-                            case 7:
-                            {
-                                colliderLocPosY = stoi(newLine);
-                            }
-                            break;
-                            case 8:
-                            {
-                                colliderSizeX = stoi(newLine);
-                            }
-                            break;
-                            case 9:
-                            {
-                                colliderSizeY = stoi(newLine);
-                            }
-                            break;
-                            }
-                            newLine = "";
-                        }
-                    }
-                    animations.at(animations.size() - 1).addFrame(sf::Vector2i(pictPosX, pictPosY), sf::Vector2i(pictSizeX, pictSizeY), sf::Vector2i(colliderLocPosX, colliderLocPosY), sf::Vector2i(colliderSizeX, colliderSizeY));
-                }
-                break;
-                }
-            }
-            myfile.close();
-        }
+        std::string adressTxt;
+#ifdef DEBUG
+        std::string debugString;
+#endif // DEBUG
+        Animator() {}
+        Animator(std::string adressTxt);
+        void initialize(std::string adressTxt);
+        void updateAnimation(Collision &collision);
+        void setAnimation(int number, sf::Sprite &sprite);
+        sf::Sprite &getSprite();
+        void moveSprite(float x, float y);
+        void readAnimator(std::string adress);
     };
     Collision collision;
-    Animator *animator;
+    Animator animator;
     sf::Vector2f input;
-    float speedModifier = 0.01f;
+    float speedModifier = 70.0f;
 
     int id;
 
@@ -390,61 +126,22 @@ protected:
 
 public:
     // ввод Input
-    void setInput(sf::Vector2f input)
-    {
-        this->input = gm::Normalize(input);
-    }
+    void setInput(sf::Vector2f input);
     // вернёт ссылку на коллизию для дальнейших взаимодействий
-    Collision &getCollision() { return collision; }
-    Object(int id, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL, std::string adressTxt = "texts/example.txt")
-    {
-        animator = new Animator(adressTxt);
-        collision.add(position, sizeX, sizeY);
-        this->id = id;
-    }
-    virtual ~Object()
-    {
-        delete animator;
-    }
+    Collision &getCollision();
+    Object(int id, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL, std::string adressTxt = "texts/example.txt");
+    Object(int id, float speedModifier, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL, std::string adressTxt = "texts/example.txt");
+    virtual ~Object();
     // виртуальные для возможного переопределения в детях
-    virtual void physicsUpdate(std::vector<Object> &objects)
-    {
-        collision.onCollisionEnter(objects, actions.at(1));
-        collision.onCollisionStay(objects, actions.at(2));
-        collision.onCollisionExit(*this, actions.at(3));
-        move(input * speedModifier);
-        animator->updateAnimation(collision);
-    }
-    sf::Sprite &draw()
-    {
-        return animator->getSprite();
-    }
-    void move(float x, float y)
-    {
-        animator->moveSprite(x, y);
-    }
-    void move(sf::Vector2f input)
-    {
-        animator->moveSprite(input.x, input.y);
-    }
-    // ввожу систему действий по кодам действия, таким образом действия с кодами 1,2,3 будут соответствовать вхождению, нахождению и выходу из коллизии соответственно
-    // блять только понял какие есть с этим проблемы
-    //  однако чего не сделаешь ради полиморфизма
-    virtual void action(int code)
-    {
-        switch (code)
-        {
-        case 1:
-            std::cout << "Enter " << id << std::endl;
-            break;
-        case 2:
-            // std::cout << "Stay " << id << std::endl;
-            break;
-        case 3:
-            std::cout << "Exit " << id << std::endl;
-            break;
-        }
-    }
+    virtual void physicsUpdate(std::vector<Object> &objects, float delta);
+    virtual void animationUpdate();
+    virtual void update();
+    sf::Sprite &draw();
+    void move(float x, float y);
+    void move(sf::Vector2f input);
+    virtual void action(int code);
+    sf::Vector2<float> getSpritePosition();
 };
 
+using vecObjRefs = std::vector<std::reference_wrapper<Object>>;
 #endif
