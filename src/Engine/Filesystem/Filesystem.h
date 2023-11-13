@@ -2,12 +2,13 @@
 #ifndef FILESYSTEM
 #define FILESYSTEM
 
-#include<>
+#include <fstream>
+#include <string>
+#include <vector>
 
-namespace FS 
+namespace gfs
 {
-	
+    std::vector<std::vector<std::string>> readFromFile(std::string filename, int countOfData, char datatype = 'D', bool untilInterrupt = false, int startPosition = 0);
 }
-
 
 #endif

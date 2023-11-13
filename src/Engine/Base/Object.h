@@ -9,7 +9,7 @@
 #include <string>
 #include "../Math/GameMath.h"
 
-#define DEBUG
+// #define DEBUGPHYSICS
 
 class Object
 {
@@ -118,7 +118,7 @@ private:
     Collision collision;
     Animator animator;
     sf::Vector2f input;
-    float speedModifier = 0.01f;
+    float speedModifier = 70.0f;
 
     int id;
 
@@ -131,9 +131,10 @@ public:
     // вернёт ссылку на коллизию для дальнейших взаимодействий
     Collision &getCollision();
     Object(int id, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL, std::string adressTxt = "texts/example.txt");
+    Object(int id, float speedModifier, float sizeX = 100, float sizeY = 100, sf::Vector2f position = V2fNULL, std::string adressTxt = "texts/example.txt");
     virtual ~Object();
     // виртуальные для возможного переопределения в детях
-    virtual void physicsUpdate(std::vector<Object> &objects);
+    virtual void physicsUpdate(std::vector<Object> &objects, float delta);
     virtual void animationUpdate();
     virtual void update();
     sf::Sprite &draw();
