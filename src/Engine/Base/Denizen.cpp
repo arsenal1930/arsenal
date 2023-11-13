@@ -1,6 +1,6 @@
 #include "Denizen.h"
 
-void Denizen::setInput(sf::Vector2<float> input)
+void Denizen::setInput(sf::Vector2f input)
 {
     this->input = gm::Normalize(input);
 }
