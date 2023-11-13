@@ -6,9 +6,11 @@ project('arsenal1930', 'cpp',
 src = [
   'src/init.cpp', 
   'src/Engine/Engine.cpp', 
-  'src/Engine/Base/Denizen.cpp', 
-  'src/Engine/Base/ITextureable.cpp',
-  'src/Engine/Math/GameMath.cpp'
+  'src/Engine/Math/GameMath.cpp',
+  'src/Engine/Filesystem/Filesystem.cpp', 
+  'src/Engine/Base/Object.cpp', 
+  'src/Engine/Base/Camera.cpp'
+
 ]
 
 sfml_dep = dependency('sfml')
