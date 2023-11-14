@@ -9,7 +9,7 @@ int main()
 	mainWorld.addObject(object2);
 
 	// запуск движка
-	Engine myGame(&mainWorld,7);
+	Engine myGame(&mainWorld,300);
 	myGame.run();
 
 	return 0;

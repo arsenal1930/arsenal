@@ -12,6 +12,11 @@ void Engine::input()
 		case sf::Event::KeyPressed:
 			switch (event_play.key.code)
 			{
+			case sf::Keyboard::A:
+			case sf::Keyboard::D:
+			case sf::Keyboard::W:
+			case sf::Keyboard::S:
+				break;
 			default:
 				break;
 			}
@@ -27,16 +32,21 @@ void Engine::input()
 						sf::Keyboard::isKeyPressed(sf::Keyboard::A),
 					sf::Keyboard::isKeyPressed(sf::Keyboard::S) -
 						sf::Keyboard::isKeyPressed(sf::Keyboard::W)));
+				mainWorld->getObject(playerId).setDirection(sf::Vector2f(
+					sf::Keyboard::isKeyPressed(sf::Keyboard::D) -
+						sf::Keyboard::isKeyPressed(sf::Keyboard::A),
+					sf::Keyboard::isKeyPressed(sf::Keyboard::S) -
+						sf::Keyboard::isKeyPressed(sf::Keyboard::W)));
 				break;
 			case sf::Keyboard::Escape:
 				mainWindow->close();
 				break;
 			case sf::Keyboard::Num0:
-				camera->setOnWindow(*mainWindow);
+				mainWorld->getObject(playerId).setInput(V2fNULL);
 				playerId = 0;
 				break;
 			case sf::Keyboard::Num1:
-				camera->setOnWindow(*mainWindow);
+				mainWorld->getObject(playerId).setInput(V2fNULL);
 				playerId = 1;
 				break;
 			default:
@@ -85,6 +95,7 @@ void Engine::draw()
 	}
 	// Вывод объектов в графическом окне
 	mainWindow->display();
+
 }
 
 Engine::Engine(TheWorld *world, float animationFrameRate)
@@ -115,7 +126,7 @@ void Engine::run()
 	{
 		// Текущее время присваиваем переменной времени dt
 		sf::Time dt = clockPhysics.restart();
-
+		
 		input();
 		update(dt, [&]()
 			   {if(clockAnimation.getElapsedTime().asSeconds() >= animationDelta)
