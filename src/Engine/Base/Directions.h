@@ -2,12 +2,19 @@
 #ifndef DIRECTIONS
 #define DIRECTOINS
 
-struct Directions {
-        const static int directionCount = 8;
-        enum directions{up = 1, up_right = 2, right = 3, down_right = 4, down = 5, down_left = 6, left = 7,up_left = 8};
-        
+#include <cmath>
+#include <SFML/System/Vector2.hpp>
 
+#include <iostream>
 
-};
+typedef enum direct4
+{
+        left = 0,
+        down = 1,
+        right = 2,
+        up = 3
+} direction;
+
+direction fromVec2dir(const sf::Vector2f &vec);
 
 #endif

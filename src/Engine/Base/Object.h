@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "Directions.h"
 #include "../Math/GameMath.h"
 
 // #define DEBUGPHYSICS
@@ -135,7 +136,7 @@ private:
 
     public:
         // Путь к текстовому файлику, в котором указаны все характеристики анимаций объекта
-        std::string adressTxt;
+        std::string addressTxt;
 #ifdef DEBUG
         std::string debugString;
 #endif // DEBUG
@@ -149,6 +150,8 @@ private:
         void updateAnimation(Collision &collision);
         // Меняет анимацию
         void setAnimation(int number, sf::Sprite &sprite);
+        // Меняет анимацию по имени
+        void setAnimation(sf::Sprite &sprite, std::string name);
         // Возвращает спрайт объекта, в основном используется для отрисовки , хочу сделать дружественным , а функцию отрисовки сделать дружественной
         sf::Sprite &getSprite();
         // Двигает спрайт в пространстве
@@ -162,6 +165,8 @@ private:
     Animator animator;
     // Ввод, указывает на направление движения объекта
     sf::Vector2f input;
+    // Todo comment next line
+    direction dir = left;
     // Скорость объекта
     float speedModifier = 70.0f;
     // Уникальный индентификатор объекта
@@ -174,6 +179,8 @@ protected:
 public:
     // Задаст направление движения объекта
     void setInput(sf::Vector2f input);
+    //
+    void setDirection(sf::Vector2f input);
     // Вернёт ссылку на коллизию объекта для дальнейших взаимодействий
     Collision &getCollision();
     // Конструктор объекта, обязателен только индентификатор

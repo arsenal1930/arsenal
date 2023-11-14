@@ -155,11 +155,10 @@ void Object::Animator::Animation::disable()
 {
     isActive = false;
 }
-void Object::Animator::Animation::setTileset(std::string adress)
+void Object::Animator::Animation::setTileset(std::string address)
 {
-    if (!tilemap.loadFromFile(adress))
-    {
-    }
+    if (!tilemap.loadFromFile(address))
+        ;
 }
 sf::Texture &Object::Animator::Animation::getTileset()
 {
@@ -226,6 +225,15 @@ void Object::Animator::setAnimation(int number, sf::Sprite &sprite)
     sprite.setTexture(animations.at(currentAnimation).getTileset());
     animations.at(currentAnimation).enable();
 }
+void Object::Animator::setAnimation(sf::Sprite &sprite, std::string name)
+{
+    animations.at(currentAnimation).disable();
+    for (size_t i = 0; i < animations.size(); i++)
+        if (animations.at(i).name == name)
+            currentAnimation = i;
+    sprite.setTexture(animations.at(currentAnimation).getTileset());
+    animations.at(currentAnimation).enable();
+}
 sf::Sprite &Object::Animator::getSprite()
 {
     return sprite;
@@ -234,127 +242,49 @@ void Object::Animator::moveSprite(float x, float y)
 {
     sprite.move(x, y);
 }
-void Object::Animator::readAnimator(std::string adress)
+void Object::Animator::readAnimator(std::string address)
 {
-    adressTxt = adress;
-    std::string line;
+    Animation newAnimation;
+    int pictPosX, pictPosY,
+        pictSizeX, pictSizeY,
+        colliderLocPosX, colliderLocPosY,
+        colliderSizeX, colliderSizeY;
+
+    addressTxt = address;
+    std::string line, word, path;
     std::ifstream myfile;
-    myfile.open(adress);
+    myfile.open(address);
     if (myfile)
     {
-        while (getline(myfile, line))
+        while (myfile >> word)
         {
-            switch (line[0])
+            switch (word[0])
             {
             case 'N':
-            {
-                Animation newAnimation;
-                int k = 0;
-                std::string newLine = "";
-                for (size_t i = 1; i < line.length(); i++)
-                {
-                    if (line[i] != ' ')
-                    {
-                        newLine += line[i];
-                    }
-                    else
-                    {
-                        k++;
-                        switch (k)
-                        {
-                        case 1:
-                        {
-                            newAnimation.name = newLine;
-                        }
-                        break;
-                        case 2:
-                        {
-                            newAnimation.setTileset(newLine);
-                        }
-                        break;
-                        case 3:
-                        {
-                            newAnimation.maxFrame = stoi(newLine);
-                        }
-                        break;
-                        }
-                        newLine = "";
-                    }
-                }
+                myfile >> newAnimation.name >> path >> newAnimation.maxFrame;
+                newAnimation.setTileset(path);
                 animations.push_back(newAnimation);
-            }
-            break;
+                break;
             case 'F':
-            {
-                int pictPosX, pictPosY, pictSizeX, pictSizeY, colliderLocPosX, colliderLocPosY, colliderSizeX, colliderSizeY;
-                int k = 0;
-                std::string newLine = "";
-
-                for (size_t i = 1; i < line.length(); i++)
-                {
-                    if (line[i] != ' ')
-                        newLine += line[i];
-                    else
-                    {
-                        k++;
-                        switch (k)
-                        {
-                        case 2:
-                        {
-                            pictPosX = stoi(newLine);
-                        }
-                        break;
-                        case 3:
-                        {
-                            pictPosY = stoi(newLine);
-                        }
-                        break;
-                        case 4:
-                        {
-                            pictSizeX = stoi(newLine);
-                        }
-                        break;
-                        case 5:
-                        {
-                            pictSizeY = stoi(newLine);
-                        }
-                        break;
-                        case 6:
-                        {
-                            colliderLocPosX = stoi(newLine);
-                        }
-                        break;
-                        case 7:
-                        {
-                            colliderLocPosY = stoi(newLine);
-                        }
-                        break;
-                        case 8:
-                        {
-                            colliderSizeX = stoi(newLine);
-                        }
-                        break;
-                        case 9:
-                        {
-                            colliderSizeY = stoi(newLine);
-                        }
-                        break;
-                        }
-                        newLine = "";
-                    }
-                }
+                myfile >> pictPosX >> pictPosY >> pictSizeX >> pictSizeY >> colliderLocPosX >> colliderLocPosY >> colliderSizeX >> colliderSizeY;
                 animations.at(animations.size() - 1).addFrame(sf::Vector2i(pictPosX, pictPosY), sf::Vector2i(pictSizeX, pictSizeY), sf::Vector2i(colliderLocPosX, colliderLocPosY), sf::Vector2i(colliderSizeX, colliderSizeY));
-            }
-            break;
+                break;
             }
         }
     }
     myfile.close();
 }
 // ввод Input
+// this->dir - direction of movement
 void Object::setInput(sf::Vector2f input)
 {
-    this->input = gm::Normalize(input);
+    this->input = gm::Normalize(input); // член
+}
+
+void Object::setDirection(sf::Vector2f input)
+{
+    if (input == V2fNULL) return;
+    this->dir = fromVec2dir(input);
 }
 
 sf::Sprite &Object::draw()
@@ -373,7 +303,7 @@ void Object::move(sf::Vector2f input)
 }
 sf::Vector2<float> Object::getSpritePosition()
 {
-    //ПЕРЕДЕЛАТЬ
+    // ПЕРЕДЕЛАТЬ
     return animator.getSprite().getGlobalBounds().getPosition() + animator.getSprite().getGlobalBounds().getSize() / 2.0f;
 }
 void Object::action(int code)
@@ -409,6 +339,7 @@ void Object::animationUpdate()
 #ifdef DEBUGANIM
     std::cout << "Updating in Object " << id << '\n';
 #endif // DEBUGANIM
+    animator.setAnimation(dir, animator.getSprite());
     animator.updateAnimation(collision);
 }
 // виртуальные для возможного переопределения в детях

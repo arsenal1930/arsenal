@@ -9,7 +9,8 @@ src = [
   'src/Engine/Math/GameMath.cpp',
   'src/Engine/Filesystem/Filesystem.cpp', 
   'src/Engine/Base/Object.cpp', 
-  'src/Engine/Base/Camera.cpp'
+  'src/Engine/Base/Camera.cpp', 
+  'src/Engine/Base/Directions.cpp'
 
 ]
 
